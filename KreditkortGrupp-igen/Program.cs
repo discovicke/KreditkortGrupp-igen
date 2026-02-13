@@ -16,7 +16,8 @@ while (run)
     {
         Console.WriteLine(alternativ);
     }
-
+        Console.WriteLine();
+        Console.Write("Choice: ");
         string? val = Console.ReadLine();
     switch (val)
     {

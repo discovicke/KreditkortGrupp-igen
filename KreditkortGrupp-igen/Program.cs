@@ -2,9 +2,10 @@
 
 string[] menu = [
     "1. Generate mock data?",
-    "2. List people?",
+    "2. List People?",
     "3. List Cards?",
-    "4. Exit"
+    "4. List Transactions",
+    "5. Exit"
 ];
 
 bool run = true;
@@ -34,6 +35,10 @@ while (run)
         break;
 
         case "4":
+
+        break;
+
+        case "5":
             Console.WriteLine("Terminating the program");
             run = false;
         break;

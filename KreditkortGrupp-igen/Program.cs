@@ -67,8 +67,8 @@ while (run)
             foreach (var name in nameList)
             {
                 nameParam.Value = name.ToString();
-                command.ExecuteNonQuery();
             }
+                command.ExecuteNonQuery();
             transaction.Commit();
             
             

@@ -1,4 +1,6 @@
 ﻿using KreditkortGrupp_igen;
+using System.Diagnostics;
+
 
 
 var firstnamePath = "MOCK_DATA_first_name.json";
@@ -32,9 +34,13 @@ while (run)
             Console.WriteLine("Number of people to generate (default 100 000: ");
             var numberOfPeople = int.TryParse(Console.ReadLine(), out int result) ? result : 100000;
             Console.WriteLine("Generating data...");
+            var sw = Stopwatch.StartNew();
             nameList = arrayCreator.CreateNameList(firstnamePath, lastnamePath, result);
+            sw.Stop();  
+            double seconds = sw.Elapsed.TotalSeconds;
+
             
-            Console.WriteLine("Data generated. \nPress any key to return to main menu");
+            Console.WriteLine($"Data generated. {seconds:F1} seconds. \nPress any key to return to main menu");
             Console.ReadKey();
             break;
 

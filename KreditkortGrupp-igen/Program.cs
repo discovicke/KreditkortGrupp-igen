@@ -68,7 +68,7 @@ while (run)
             {
                 nameParam.Value = name.ToString();
             }
-                command.ExecuteNonQuery();
+            command.ExecuteNonQuery();
             transaction.Commit();
             
             

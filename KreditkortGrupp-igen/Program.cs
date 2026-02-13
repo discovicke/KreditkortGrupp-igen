@@ -1,12 +1,13 @@
 ﻿using KreditkortGrupp_igen;
 using Microsoft.Data.Sqlite;
-
+using System.Diagnostics;
 using var connection = new SqliteConnection("Data Source=kreditkort.db");
 connection.Open();
 using var command = connection.CreateCommand();
 command.CommandText =
     @"CREATE TABLE IF NOT EXISTS People (id INTEGER PRIMARY KEY, Name TEXT NOT NULL, Kreditkort INTEGER)";
 command.ExecuteNonQuery();
+
 
 
 var firstnamePath = "MOCK_DATA_first_name.json";
@@ -42,6 +43,7 @@ while (run)
             Console.WriteLine("Number of people to generate (default 100 000: ");
             var numberOfPeople = int.TryParse(Console.ReadLine(), out int result) ? result : 100000;
             Console.WriteLine("Generating data...");
+            var sw = Stopwatch.StartNew();
             nameList = arrayCreator.CreateNameList(firstnamePath, lastnamePath, result);
             foreach (var name in nameList)
             {
@@ -51,7 +53,10 @@ while (run)
                 command.ExecuteNonQuery();
             }
 
-            Console.WriteLine("Data generated. \nPress any key to return to main menu");
+            sw.Stop();  
+            double seconds = sw.Elapsed.TotalSeconds;
+            
+            Console.WriteLine($"Data generated in {seconds:F1} seconds. \nPress any key to return to main menu");
             Console.ReadKey();
             break;
 

@@ -9,7 +9,7 @@ string[] menu = [
 
 bool run = true;
 
-Console.WriteLine("What do you want to do?");
+Console.WriteLine("|=== What do you want to do? ===|\n");
 while (run)
 {
     foreach(var alternativ in menu)

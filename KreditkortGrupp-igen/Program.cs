@@ -7,9 +7,10 @@ string[] menu = [
     "4. Exit"
 ];
 
+bool run = true;
 
 Console.WriteLine("What do you want to do?");
-while (true)
+while (run)
 {
     foreach(var alternativ in menu)
     {
@@ -32,7 +33,8 @@ while (true)
         break;
 
         case "4":
-
+            Console.WriteLine("Terminating the program");
+            run = false;
         break;
     }
 }

@@ -40,7 +40,7 @@ while (run)
             double seconds = sw.Elapsed.TotalSeconds;
 
             
-            Console.WriteLine($"Data generated. {seconds:F1} seconds. \nPress any key to return to main menu");
+            Console.WriteLine($"Data generated in {seconds:F1} seconds. \nPress any key to return to main menu");
             Console.ReadKey();
             break;
 

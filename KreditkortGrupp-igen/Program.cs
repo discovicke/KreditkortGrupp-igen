@@ -1,7 +1,9 @@
 ﻿using KreditkortGrupp_igen;
+using Microsoft.Data.SqlClient;
 using Microsoft.Data.Sqlite;
+using System.ComponentModel.Design;
+using System.Data;
 using System.Diagnostics;
-
 using var connection = new SqliteConnection("Data Source=kreditkort.db");
 connection.Open();
 using var command = connection.CreateCommand();
@@ -20,6 +22,9 @@ CardNumber TEXT NOT NULL,
 PersonId INTEGER, 
 FOREIGN KEY (PersonId) REFERENCES People(id))";
 command.ExecuteNonQuery();
+
+
+var rnd = new Random();
 
 var firstnamePath = "MOCK_DATA_first_name.json";
 var lastnamePath = "MOCK_DATA-last_name.json";
@@ -52,20 +57,20 @@ while (run)
     {
         case "1":
         {
-            Console.WriteLine("Number of people to generate (default 100 000: ");
-            var numberOfPeople = int.TryParse(Console.ReadLine(), out int result) ? result : 100000;
-            Console.WriteLine("Generating data...");
-            var sw = Stopwatch.StartNew();
-            nameList = arrayCreator.CreateNameList(firstnamePath, lastnamePath, result);
-            
-            using var transaction = connection.BeginTransaction();
-            command.Transaction = transaction;
-            
-            command.CommandText = @"INSERT INTO People (Name) VALUES (@Name)";
 
-            var nameParam = command.CreateParameter();
-            nameParam.ParameterName = "@Name";
-            command.Parameters.Add(nameParam);
+                Console.WriteLine("Number of people to generate (default 100 000: ");
+                var numberOfPeople = int.TryParse(Console.ReadLine(), out int result) ? result : 100000;
+                Console.WriteLine("Generating data...");
+                var sw = Stopwatch.StartNew();
+                nameList = arrayCreator.CreateNameList(firstnamePath, lastnamePath, result);
+
+                using var transaction = connection.BeginTransaction();
+                command.Transaction = transaction;
+                command.CommandText = @"INSERT INTO People (Name) VALUES (@Name)";
+
+                var nameParam = command.CreateParameter();
+                nameParam.ParameterName = "@Name";
+                command.Parameters.Add(nameParam);
 
             foreach (var name in nameList)
             {
@@ -78,6 +83,8 @@ while (run)
             
             command.CommandText = @"INSERT INTO CreditCards (PersonId, CardNumber) VALUES (@PersonId, @CardNumber)";
 
+                sw.Stop();
+                double seconds = sw.Elapsed.TotalSeconds;
             var dataToAdd = CardToPerson(param);
 
             foreach (var person in dataToAdd)
@@ -101,19 +108,23 @@ while (run)
             sw.Stop();
             double seconds = sw.Elapsed.TotalSeconds;
 
-            Console.WriteLine($"Data generated in {seconds:F1} seconds. \nPress any key to return to main menu");
-            Console.ReadKey();
-            break;
-        }
+                Console.WriteLine($"Data generated in {seconds:F1} seconds. \nPress any key to return to main menu");
+                Console.ReadKey();
+                break;
+
+            }
 
         case "2":
             PrintNames(nameList);
             Console.WriteLine("Data generated. \nPress any key to return to main menu");
+            
             Console.ReadKey();
             break;
 
         case "3":
-
+            string card = CreditCard.GenerateCreditCardNumber(rnd);
+            Console.WriteLine($"Generated card: {card}");
+            
             break;
 
         case "4":

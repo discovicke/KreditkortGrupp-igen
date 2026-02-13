@@ -30,7 +30,9 @@ while (run)
     switch (val)
     {
         case "1":
-
+            Console.Clear();
+            Console.Write("Number of people to generate (default 100 000): ");
+            Console.ReadLine();
             break;
 
         case "2":

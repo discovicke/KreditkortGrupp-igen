@@ -1,4 +1,12 @@
-﻿
+﻿using KreditkortGrupp_igen;
+
+
+var firstnamePath = "MOCK_DATA_first_name.json";
+var lastnamePath = "MOCK_DATA-last_name.json";
+
+var arrayCreator = new JsonArrayCreator();
+var nameList = arrayCreator.CreateNameList(firstnamePath, lastnamePath, 100);
+
 
 string[] menu = [
     "1. Generate mock data?",
@@ -17,19 +25,33 @@ while (run)
     {
         Console.WriteLine(alternativ);
     }
-        Console.Write("\nChoice: ");
-        string? val = Console.ReadLine();
+    Console.Write("\nChoice: ");
+    string? val = Console.ReadLine();
     switch (val)
     {
         case "1":
 
-using KreditkortGrupp_igen;
+            break;
 
-var firstnamePath = "MOCK_DATA_first_name.json";
-var lastnamePath = "MOCK_DATA-last_name.json";
+        case "2":
 
-var arrayCreator = new JsonArrayCreator();
-var nameList = arrayCreator.CreateNameList(firstnamePath, lastnamePath, 100);
+            break;
+
+        case "3":
+
+            break;
+
+        case "4":
+
+            break;
+
+        case "5":
+            Console.WriteLine("Terminating the program");
+            run = false;
+            break;
+    }
+}
+
 
 foreach (var name in nameList)
 {

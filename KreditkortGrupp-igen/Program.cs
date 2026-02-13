@@ -1,3 +1,38 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿
 
-Console.WriteLine("Hello, World!");
+string[] menu = [
+    "1. Generate mock data?",
+    "2. List people?",
+    "3. List Cards?",
+    "4. Exit"
+];
+
+
+Console.WriteLine("What do you want to do?");
+while (true)
+{
+    foreach(var alternativ in menu)
+    {
+        Console.WriteLine(alternativ);
+    }
+
+        string? val = Console.ReadLine();
+    switch (val)
+    {
+        case "1":
+
+        break;
+
+        case "2":
+
+        break;
+
+        case "3":
+
+        break;
+
+        case "4":
+
+        break;
+    }
+}

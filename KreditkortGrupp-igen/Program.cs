@@ -1,12 +1,12 @@
 ﻿using KreditkortGrupp_igen;
+using System.Diagnostics;
+
 
 
 var firstnamePath = "MOCK_DATA_first_name.json";
 var lastnamePath = "MOCK_DATA-last_name.json";
 
 var arrayCreator = new JsonArrayCreator();
-var nameList = arrayCreator.CreateNameList(firstnamePath, lastnamePath, 100);
-
 
 string[] menu = [
     "1. Generate mock data?",
@@ -17,6 +17,7 @@ string[] menu = [
 ];
 
 bool run = true;
+var nameList = new List<Name>();
 
 Console.WriteLine("|=== What do you want to do? ===|\n");
 while (run)
@@ -30,13 +31,23 @@ while (run)
     switch (val)
     {
         case "1":
-            Console.Clear();
-            Console.Write("Number of people to generate (default 100 000): ");
-            Console.ReadLine();
+            Console.WriteLine("Number of people to generate (default 100 000: ");
+            var numberOfPeople = int.TryParse(Console.ReadLine(), out int result) ? result : 100000;
+            Console.WriteLine("Generating data...");
+            var sw = Stopwatch.StartNew();
+            nameList = arrayCreator.CreateNameList(firstnamePath, lastnamePath, result);
+            sw.Stop();  
+            double seconds = sw.Elapsed.TotalSeconds;
+
+            
+            Console.WriteLine($"Data generated. {seconds:F1} seconds. \nPress any key to return to main menu");
+            Console.ReadKey();
             break;
 
         case "2":
-
+            PrintNames(nameList);
+            Console.WriteLine("Data generated. \nPress any key to return to main menu");
+            Console.ReadKey();
             break;
 
         case "3":
@@ -53,9 +64,11 @@ while (run)
             break;
     }
 }
-
-
-foreach (var name in nameList)
+void PrintNames(List<Name> names)
 {
-    Console.WriteLine(name.ToString());
+    foreach (var name in names)
+    {
+        Console.WriteLine(name);
+    }
+    
 }

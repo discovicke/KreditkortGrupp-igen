@@ -1,14 +1,23 @@
 ﻿using KreditkortGrupp_igen;
 using Microsoft.Data.Sqlite;
 using System.Diagnostics;
+
 using var connection = new SqliteConnection("Data Source=kreditkort.db");
 connection.Open();
 using var command = connection.CreateCommand();
 command.CommandText =
-    @"CREATE TABLE IF NOT EXISTS People (id INTEGER PRIMARY KEY, Name TEXT NOT NULL, Kreditkort INTEGER)";
+    @"
+CREATE TABLE IF NOT EXISTS People (
+    id INTEGER PRIMARY KEY, 
+    Name TEXT NOT NULL, 
+    CreditId INTEGER, 
+    FOREIGN KEY (CreditId) REFERENCES CreditCards(id))";
 command.ExecuteNonQuery();
-
-
+command.CommandText = @"
+CREATE TABLE IF NOT EXISTS CreditCards 
+(id INTEGER PRIMARY KEY, 
+CardNumber TEXT NOT NULL)";
+command.ExecuteNonQuery();
 
 var firstnamePath = "MOCK_DATA_first_name.json";
 var lastnamePath = "MOCK_DATA-last_name.json";
@@ -40,25 +49,37 @@ while (run)
     switch (val)
     {
         case "1":
+        {
             Console.WriteLine("Number of people to generate (default 100 000: ");
             var numberOfPeople = int.TryParse(Console.ReadLine(), out int result) ? result : 100000;
             Console.WriteLine("Generating data...");
             var sw = Stopwatch.StartNew();
             nameList = arrayCreator.CreateNameList(firstnamePath, lastnamePath, result);
+
+            using var transaction = connection.BeginTransaction();
+            command.Transaction = transaction;
+            command.CommandText = @"INSERT INTO People (Name) VALUES (@Name)";
+
+            var nameParam = command.CreateParameter();
+            nameParam.ParameterName = "@Name";
+            command.Parameters.Add(nameParam);
+
             foreach (var name in nameList)
             {
-                command.CommandText = "INSERT INTO People (Name) VALUES (@Name)";
-                command.Parameters.Clear();
-                command.Parameters.AddWithValue("@Name", name.ToString());
+                nameParam.Value = name.ToString();
                 command.ExecuteNonQuery();
             }
-
-            sw.Stop();  
-            double seconds = sw.Elapsed.TotalSeconds;
+            transaction.Commit();
             
+            
+
+            sw.Stop();
+            double seconds = sw.Elapsed.TotalSeconds;
+
             Console.WriteLine($"Data generated in {seconds:F1} seconds. \nPress any key to return to main menu");
             Console.ReadKey();
             break;
+        }
 
         case "2":
             PrintNames(nameList);

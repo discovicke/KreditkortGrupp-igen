@@ -9,14 +9,16 @@ command.CommandText =
     @"
 CREATE TABLE IF NOT EXISTS People (
     id INTEGER PRIMARY KEY, 
-    Name TEXT NOT NULL, 
-    CreditId INTEGER, 
-    FOREIGN KEY (CreditId) REFERENCES CreditCards(id))";
+    Name TEXT NOT NULL,
+    HasCard BOOLEAN DEFAULT FALSE)
+    ";
 command.ExecuteNonQuery();
 command.CommandText = @"
 CREATE TABLE IF NOT EXISTS CreditCards 
 (id INTEGER PRIMARY KEY, 
-CardNumber TEXT NOT NULL)";
+CardNumber TEXT NOT NULL,
+PersonId INTEGER, 
+FOREIGN KEY (PersonId) REFERENCES People(id))";
 command.ExecuteNonQuery();
 
 var firstnamePath = "MOCK_DATA_first_name.json";
@@ -55,9 +57,10 @@ while (run)
             Console.WriteLine("Generating data...");
             var sw = Stopwatch.StartNew();
             nameList = arrayCreator.CreateNameList(firstnamePath, lastnamePath, result);
-
+            
             using var transaction = connection.BeginTransaction();
             command.Transaction = transaction;
+            
             command.CommandText = @"INSERT INTO People (Name) VALUES (@Name)";
 
             var nameParam = command.CreateParameter();
@@ -69,10 +72,32 @@ while (run)
                 nameParam.Value = name.ToString();
                 command.ExecuteNonQuery();
             }
+            transaction.Commit();
+            
+            command.Transaction = transaction;
+            
+            command.CommandText = @"INSERT INTO CreditCards (PersonId, CardNumber) VALUES (@PersonId, @CardNumber)";
+
+            var dataToAdd = CardToPerson(param);
+
+            foreach (var person in dataToAdd)
+            {
+                var personIdParam = command.CreateParameter();
+                personIdParam.ParameterName = "@PersonId";
+                personIdParam.Value = person.Key;
+                command.Parameters.Add(personIdParam);
+                
+                var cardNumberParam = command.CreateParameter();
+                cardNumberParam.ParameterName = "@CardNumber";
+                cardNumberParam.Value = person.Value;
+                command.Parameters.Add(cardNumberParam);
+                
+                command.ExecuteNonQuery();
+            }
 
             transaction.Commit();
-
-
+            
+            
             sw.Stop();
             double seconds = sw.Elapsed.TotalSeconds;
 
@@ -108,4 +133,65 @@ void PrintNames(List<Name> names)
     {
         Console.WriteLine(name);
     }
+}
+
+Dictionary<long, string> CardToPerson(string cardNumber)
+{
+    var listOfUsers = command.CommandText = @"
+        SELECT 
+            Users.Id 
+        FROM
+            Users
+        WHERE HasCard = false";
+    command.ExecuteReader();
+    
+    foreach (user in listOfUsers)
+    {
+        var bucket = user % 100;
+        var toBeInserted = new Dictionary<long, string>();
+        
+        if (bucket < 70)
+        {
+            //get number and assign to var cardNumberToAdd
+            toBeInserted.Add(user, cardNumberToAdd);
+        } 
+        else if (user < 90)
+        {   
+            var numberOfCards = 2;
+            
+            foreach (card in numberOfCards)
+            {
+                //get number and assign to var cardNumberToAdd
+                toBeInserted.Add(user, cardNumberToAdd);
+            }
+        }
+        var rand = new Random();
+        var numberOfCards =  rand.Next(3, 11);
+            
+        foreach (card in numberOfCards)
+        {
+            //get number and assign to var cardNumberToAdd
+            toBeInserted.Add(user, cardNumberToAdd);
+        }
+
+        return toBeInserted;
+    }
+    
+    
+    /*
+     * Plocka ut alla användare ur databsen --> lista
+     * Fördela användare till 3 typer
+     * Insert typ 1 = 1 kort
+     * 2 = 2
+     * 3 = 3-10 (random)
+     * IF redan har nummer = inget händer
+     *
+     * För varje person i databasen ska det finnas ett kort
+     * OM person.id STARTS WITH = 1 > 6
+     * THEN CardNumber.PersonId = person.id på ETT KORT
+     * OM person.id START WITH = 7 > 8
+     * THEN CardNumber.PersonId = person.id på TVÅ KORT
+     * OM person.id START WITH = 9
+     * THEN CardNumber.PersonId = person.id på TRE KORT
+     */
 }

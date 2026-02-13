@@ -67,11 +67,11 @@ while (run)
             foreach (var name in nameList)
             {
                 nameParam.Value = name.ToString();
+                command.ExecuteNonQuery();
             }
-            command.ExecuteNonQuery();
+
             transaction.Commit();
-            
-            
+
 
             sw.Stop();
             double seconds = sw.Elapsed.TotalSeconds;

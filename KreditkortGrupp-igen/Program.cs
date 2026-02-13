@@ -15,6 +15,7 @@ string[] menu = [
 ];
 
 bool run = true;
+var nameList = new List<Name>();
 
 Console.WriteLine("|=== What do you want to do? ===|\n");
 while (run)
@@ -30,12 +31,17 @@ while (run)
         case "1":
             Console.WriteLine("Number of people to generate (default 100 000: ");
             var numberOfPeople = int.TryParse(Console.ReadLine(), out int result) ? result : 100000;
-            var nameList = arrayCreator.CreateNameList(firstnamePath, lastnamePath, result);
-            PrintNames(nameList);
+            Console.WriteLine("Generating data...");
+            nameList = arrayCreator.CreateNameList(firstnamePath, lastnamePath, result);
+            
+            Console.WriteLine("Data generated. \nPress any key to return to main menu");
+            Console.ReadKey();
             break;
 
         case "2":
-
+            PrintNames(nameList);
+            Console.WriteLine("Data generated. \nPress any key to return to main menu");
+            Console.ReadKey();
             break;
 
         case "3":

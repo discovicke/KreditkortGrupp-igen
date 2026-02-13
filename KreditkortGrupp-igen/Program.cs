@@ -5,8 +5,6 @@ var firstnamePath = "MOCK_DATA_first_name.json";
 var lastnamePath = "MOCK_DATA-last_name.json";
 
 var arrayCreator = new JsonArrayCreator();
-var nameList = arrayCreator.CreateNameList(firstnamePath, lastnamePath, 100);
-
 
 string[] menu = [
     "1. Generate mock data?",
@@ -30,7 +28,10 @@ while (run)
     switch (val)
     {
         case "1":
-
+            Console.WriteLine("Number of people to generate (default 100 000: ");
+            var numberOfPeople = int.TryParse(Console.ReadLine(), out int result) ? result : 100000;
+            var nameList = arrayCreator.CreateNameList(firstnamePath, lastnamePath, result);
+            PrintNames(nameList);
             break;
 
         case "2":
@@ -51,9 +52,11 @@ while (run)
             break;
     }
 }
-
-
-foreach (var name in nameList)
+void PrintNames(List<Name> names)
 {
-    Console.WriteLine(name.ToString());
+    foreach (var name in names)
+    {
+        Console.WriteLine(name);
+    }
+    
 }
